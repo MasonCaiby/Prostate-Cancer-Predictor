@@ -27,8 +27,12 @@ Data preprocessing was done using pyspark.
 
 A pipeline was built in order to process data sets in the same way (see the datacleaning.py).  These steps are done prior to a train/test split so that genomic data for one patient is not being split.  Preprocessing includes:
 * Changing Gleason score to binary (greater than or equal to 7 is 1, less than 7 is 0)
-* Removing duplicate data
-* One-hot encoding all VEP_GENES
+* Combining all of the genes for each patient into a vector 
+* One-hot encoding all VEP_GENES using CountVectorizer
+* In order to write the data to a csv the Spark dataframe needed to be converted to a Pandas dataframe
+
+
+
 
 
 
