@@ -25,9 +25,11 @@ The data consists of 20,218,807 rows and 61 columns.  There are 412 patients, ea
 
 Data preprocessing was done using pyspark.
 
-A pipeline was built in order to process train and test data sets in the same way (see the datacleaning.py)
+A pipeline was built in order to process data sets in the same way (see the datacleaning.py).  These steps are done prior to a train/test split so that genomic data for one patient is not being split.  Preprocessing includes:
+* Changing Gleason score to binary (greater than or equal to 7 is 1, less than 7 is 0)
+* Removing duplicate data
+* One-hot encoding all VEP_GENES
 
-First, data was split into a test and training set
 
 
 
