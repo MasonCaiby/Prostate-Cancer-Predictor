@@ -1,8 +1,11 @@
 import pandas as pd
 from pyspark.sql.types import *
-from pyspark.sql.functions import udf
-from pyspark.ml.feature import OneHotEncoder, StringIndexer
+from pyspark.sql.functions import udf, collect_list
+from pyspark.ml.feature import OneHotEncoder, StringIndexer, CountVectorizer
 from pyspark.ml import Pipeline
+from pyspark.mllib.linalg import SparseVector, DenseVector
+from pyspark.mllib.linalg import Vectors, VectorUDT
+
 
 
 # data = pd.read_csv('PRAD.csv.zip', nrows=100000, compression='infer')
@@ -49,28 +52,50 @@ class DataCleaning():
         df = df.withColumn('Gleason_int', df['Gleason Score'].cast(IntegerType()))
         my_udf = udf(lambda x: self.binary(x), IntegerType())
         df = df.withColumn('Gleason_binary', my_udf(df['Gleason_int']))
-        df = df.drop('Gleason Score', 'Gleason_int')
-        return df
+        labels = df.select('IndividualID', 'Gleason_binary')
+        labels = labels.distinct()
+        df = df.drop('Gleason Score', 'Gleason_int', 'Gleason_binary')
 
-    def one_hot_encode(self, df, one_hot_cols):
-        stages = []
-        # columns = ['VEP_GENE']
-        for col in one_hot_cols:
-            stages.append(StringIndexer(inputCol=col, outputCol=col+'_idx'))
-            stages.append(OneHotEncoder(inputCol=col+'_idx', outputCol=col+'_oneHot'))
+        return labels, df
 
-        pipeline = Pipeline(stages=stages)
-        pipe_fit = pipeline.fit(df)
-        one_hot = pipe_fit.transform(df)
-        return one_hot
+    # def one_hot_encode(self, df, one_hot_cols):
+    #     stages = []
+    #     # columns = ['VEP_GENE']
+    #     for col in one_hot_cols:
+    #         stages.append(StringIndexer(inputCol=col, outputCol=col+'_idx'))
+    #         stages.append(OneHotEncoder(inputCol=col+'_idx', outputCol=col+'_oneHot'))
+    #
+    #     pipeline = Pipeline(stages=stages)
+    #     pipe_fit = pipeline.fit(df)
+    #     one_hot = pipe_fit.transform(df)
+    #     return one_hot
 
-    def fit_transform(self, df, columns, one_hot_cols):
+
+    def one_hot_encode(self, df):
+        '''
+        OUTPUT:  returns a spark data frame with a column of a list of only
+        one_hot_encoded genes for each patient, to one_hot_encode other variables
+        another function must be used
+        '''
+        gene_list = df.groupby('IndividualID').agg(collect_list('VEP_GENE'))
+        cv = CountVectorizer(inputCol='collect_list(VEP_GENE)', outputCol='one_hot')
+        model = cv.fit(gene_list)
+        one_hot_genes = model.transform(gene_list)
+        # User defined function to convert sparse vector to dense
+        func = udf(lambda vs: Vectors.dense(vs), VectorUDT())
+        OH_genes = one_hot_genes.withColumn('one_hot_dense', func(one_hot_genes['one_hot']))
+        OH_genes = OH_genes.drop('collect_list(VEP_GENE)', 'one_hot')
+        return OH_genes
+
+    def fit_transform(self, df, columns):
         '''
         Calls all data cleaning set to get usable dataframe
         '''
         df = self.get_columns(df, columns)
-        df = self.binary_gleason(df)
-        df = df.distinct()
-        df = self.one_hot_encode(df, one_hot_cols)
+        labels, df = self.binary_gleason(df)
+        df = self.one_hot_encode(df)
 
-        return df
+        return labels, df
+
+    if __name__ == '__main__':
+        from datacleaning import DataCleaning
