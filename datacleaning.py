@@ -67,7 +67,8 @@ class DataCleaning():
         one_hot_encoded genes for each patient, to one_hot_encode other variables
         another function must be used
         '''
-        gene_list = df.groupby('IndividualID').agg(collect_list('VEP_GENE'))
+        data = df.distinct()
+        gene_list = data.groupby('IndividualID').agg(collect_list('VEP_GENE'))
         cv = CountVectorizer(inputCol='collect_list(VEP_GENE)', outputCol='one_hot')
         model = cv.fit(gene_list)
         one_hot_genes = model.transform(gene_list)
