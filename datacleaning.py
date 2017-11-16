@@ -7,21 +7,11 @@ from pyspark.mllib.linalg import SparseVector, DenseVector
 from pyspark.mllib.linalg import Vectors, VectorUDT
 
 
-
-# data = pd.read_csv('PRAD.csv.zip', nrows=100000, compression='infer')
-# # type_df = data.dtypes
-# subset = data[['IndividualID', 'VEP_GENE', 'Gleason Score']]
-# gene_dummies = pd.get_dummies(subset.VEP_GENE)
-# gene_encode = subset.join(gene_dummies)
-# g_score = gene_encode.groupby('IndividualID')['Gleason Score'].value_counts()
-# one_hot_gene = gene_encode.groupby('IndividualID').sum()
-# one_hot_gene = np.array(one_hot_gene)
-
 class DataCleaning():
     '''
-    INPUT:
-    Spark data frame
-    Tuple of desired columns
+    Instantiate DataCleaning and call fit_transform in order to preprocess the
+    data.  fit_transform will return a tuple of two spark dataframes:
+    one containing labels and one containing one hot encoded genes
     '''
 
     def __init__ (self):
@@ -96,6 +86,3 @@ class DataCleaning():
         df = self.one_hot_encode(df)
 
         return labels, df
-
-    if __name__ == '__main__':
-        from datacleaning import DataCleaning
