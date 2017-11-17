@@ -14,7 +14,7 @@ if __name__ == '__main__':
         .appName('capstone') \
         .getOrCreate()
 
-    df = spark.read.csv('./PRAD.csv.gz', header=True)
+    df = spark.read.csv('/Users/meghan/DSI/capstone/PRAD.csv.gz', header=True)
     cols = ('IndividualID', 'VEP_GENE', 'Gleason Score')
     clean = DataCleaning()
     labels, genes = clean.fit_transform(df, cols)
