@@ -25,7 +25,7 @@ class DataCleaningPivot():
         pandas_df = pivot.toPandas()
         no_nan = pandas_df.fillna(value=0)
         one_hot_genes = no_nan.transpose()
-        one_hot_genes = one_hot_genes.rename(columns=trans.iloc[0])
+        one_hot_genes = one_hot_genes.rename(columns=one_hot_genes.iloc[0])
         genes = one_hot_genes.iloc[1:, :]
         return genes
 

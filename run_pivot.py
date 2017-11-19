@@ -17,5 +17,5 @@ if __name__ == '__main__':
     df = spark.read.csv('/Users/meghan/DSI/capstone/PRAD.csv.gz', header=True)
     dcp = DataCleaningPivot()
     genes, labels = dcp.fit_transform(df)
-    labels.to_csv('labels_from_pivot.csv')
-    genes.to_csv('genes_from_pivot.csv')
+    labels.to_csv('labels_from_pivot2.csv')
+    genes.to_csv('genes_from_pivot2.csv')
