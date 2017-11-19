@@ -17,6 +17,8 @@ from keras.initializers import RandomNormal
 import theano
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import recall_score
+from keras.utils.training_utils import multi_gpu_model
+from keras.callbacks import EarlyStopping
 
 def define_nn_mlp_model(X_train, y_train_ohe):
     ''' defines multi-layer-perceptron neural network '''
@@ -34,15 +36,15 @@ def define_nn_mlp_model(X_train, y_train_ohe):
                     input_dim=num_inputs,
                     kernel_initializer='RandomNormal',
                     activation='relu'))
-    model.add(Dense(units=5000,
+    model.add(Dense(units=10000,
                     kernel_initializer='RandomNormal',
                     activation='relu'))
     model.add(Dropout(0.3))
-    model.add(Dense(units=1000,
+    model.add(Dense(units=500,
                     kernel_initializer='RandomNormal',
                     activation='relu'))
     model.add(Dropout(0.3))
-    model.add(Dense(units=200,
+    model.add(Dense(units=100,
                     kernel_initializer='RandomNormal',
                     activation='relu'))
     model.add(Dense(units=num_classes,
@@ -71,9 +73,9 @@ def print_output(model, y_train, y_test, rng_seed):
 
 if __name__ == '__main__':
     rng_seed = 2 # set random number generator seed
-    X = pd.read_csv('genes_from_pivot.csv', nrows=20)
+    X = pd.read_csv('genes_from_pivot.csv')
     X = X.iloc[:, 1:].values
-    y = pd.read_csv('labels_from_pivot.csv', nrows=20)
+    y = pd.read_csv('labels_from_pivot.csv')
     y = y['Gleason_binary'].values
     X_train, X_test, y_train, y_test = train_test_split(X, y)
     print (X_train.shape)
@@ -81,6 +83,7 @@ if __name__ == '__main__':
     # y_train = y_train.reshape(-1,1)
     # print (y_train.shape)
     np.random.seed(rng_seed)
+    earlystopping = EarlyStopping(monitor='val_loss', patience=5)
     model = define_nn_mlp_model(X_train, y_train)
-    model.fit(X_train, y_train, epochs=10, batch_size=10, verbose=1) # cross val to estimate test error
+    model.fit(X_train, y_train, epochs=100, batch_size=50, verbose=1, callbacks=[earlystopping], validation_data=(X_test, y_test)) # cross val to estimate test error
     print_output(model, y_train, y_test, rng_seed)
