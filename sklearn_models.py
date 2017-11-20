@@ -96,15 +96,10 @@ if __name__ == '__main__':
     genes = get_gene_list(X)
     threshold = 0.5
 
-    # log_set, log_pred = logistic_reg(X_train, X_test, y_train, y_test, genes)
-    # tree_set, tree_pred = tree_reg(X_train, X_test, y_train, y_test, genes, threshold=threshold)
-    # ada_set, ada_pred = adaboost(X_train, X_test, y_train, y_test, genes, threshold=threshold)
-    # sgd_set, sgd_pred = stoch_grad(X_train, X_test, y_train, y_test, genes)
+    log_set, log_pred = logistic_reg(X_train, X_test, y_train, y_test, genes)
+    tree_set, tree_pred = tree_reg(X_train, X_test, y_train, y_test, genes, threshold=threshold)
+    ada_set, ada_pred = adaboost(X_train, X_test, y_train, y_test, genes, threshold=threshold)
+    sgd_set, sgd_pred = stoch_grad(X_train, X_test, y_train, y_test, genes)
 
-    # gene_count = common_gene_dict(log_set, tree_set, ada_set, sgd_set)
-    # print(gene_count)
-
-    plot_roc(X_data, y, RandomForestClassifier)
-    plot_roc(X_data, y, AdaBoostClassifier)
-    # plot_roc(X_data, y, SGDClassifier)
-    plot_roc(X_data, y, LogisticRegression)
+    gene_count = common_gene_dict(log_set, tree_set, ada_set, sgd_set)
+    print(gene_count)
