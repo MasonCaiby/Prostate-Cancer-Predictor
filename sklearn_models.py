@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 def logistic_reg (X_train, X_test, y_train, y_test, genes):
-    LR = LogisticRegression(penalty='l2')
+    LR = LogisticRegression(penalty='l1')
     LR.fit(X_train, y_train)
     y_pred = LR.predict(X_test)
     model_score(X_test, y_test, y_pred, 'Logistic Regression', LR)
@@ -24,7 +24,7 @@ def logistic_reg (X_train, X_test, y_train, y_test, genes):
     return set(top_genes), y_pred
 
 def stoch_grad (X_train, X_test, y_train, y_test, genes):
-    SGD = SGDClassifier(penalty='l2')
+    SGD = SGDClassifier(penalty='l1')
     SGD.fit(X_train, y_train)
     y_pred = SGD.predict(X_test)
     model_score(X_test, y_test, y_pred, 'Stochastic Grad', SGD)
@@ -89,6 +89,8 @@ def common_gene_dict(log_set, tree_set, ada_set, sgd_set):
 if __name__ == '__main__':
     X = pd.read_csv('select_genes1.csv', index_col=0)
     X_data = X.values
+    scaler = StandardScaler()
+    X_data = scaler.fit_transform(X_data)
     y = pd.read_csv('balanced_labels1.csv', index_col=0)
     y = y['Gleason_binary'].values.reshape(-1,1)
     X_train, X_test, y_train, y_test = train_test_split(X_data, y)
