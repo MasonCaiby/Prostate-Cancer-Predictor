@@ -49,7 +49,7 @@ class DataCleaningPivot():
         df = df.withColumn('Gleason_int', df['Gleason Score'].cast(IntegerType()))
         my_udf = udf(lambda x: self.binary(x), IntegerType())
         df = df.withColumn('Gleason_binary', my_udf(df['Gleason_int']))
-        labels = df.select('IndividualID', 'Gleason_binary')
+        labels = df.select('IndividualID', 'Gleason Score', 'Gleason_binary')
         sorted_labels = labels.sort('IndividualID')
         sorted_labels = sorted_labels.toPandas()
         return sorted_labels
