@@ -18,10 +18,12 @@ class PreprocessPivot():
 
     def __init__ (self, X, y, label_col='Gleason_binary'):
         self.X = X
+        # self.X = self.X.set_index('IndividualID')
         self.y = y
         self.X_data = self.X.values
         self.label_col = label_col
         self.y_data = self.y.set_index('IndividualID')
+        self.y_data = self.y_data[self.y_data.index.isin(self.X.index)]
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y_data)
 
     def balance_train_data(self, save_csv=False):

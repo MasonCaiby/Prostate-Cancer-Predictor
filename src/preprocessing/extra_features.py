@@ -21,20 +21,12 @@ class ExtraFeatures():
         # self.columns = columns
         return None
 
-    def get_columns(self, df, columns):
-        '''
-        Gets only desired column names
-        INPUT:  Spark DataFrame, all rows
-        OUTPUT: Spark DataFrame, all rows
-        '''
-        return df.select(*columns)
 
-    def impact_count(self, sparkdf, df):
+    def impact_count(self, sparkdf):
         imp = sparkdf.select('IndividualID', 'VEP_IMPACT')
         impact_count = imp.groupby('IndividualID').pivot('VEP_IMPACT').count()
         pandas_df = impact_count.toPandas()
-        df = df.join(pandas_df)
-        return df
+        return pandas_df
 
     def format_age(self, df):
         '''
@@ -43,18 +35,8 @@ class ExtraFeatures():
         *** Deal with NaNs
         '''
         df = df.dropna(subset = ['days_to_birth'])
-        df['age'] = df['days_to_birth'].astype(int)/-365
+        df['age'] = df.loc['days_to_birth'].astype(int)/-365
         # df = df.drop('days_to_birth')
-        return df
-
-    def race(self, df):
-        '''
-        INPUT:  pandas DataFrame, distinct # rows
-        OUTPUT:  pandas DataFrame, distinct # rows
-        Not ideal for this dataset--more than 300 unknown
-        '''
-        dummies = pd.get_dummies(df['race'])
-        df.join(dummies)
         return df
 
 
@@ -64,13 +46,12 @@ class ExtraFeatures():
         '''
         # columns = list(columns.insert(0, 'IndividualID'))
         # print (type(columns))
-        sparkdf = self.get_columns(data, columns)
-        df = sparkdf.distinct()
-        df = df.toPandas()
+        df = data.select(*columns)
+        if 'days_to_birth' in columns and 'VEP_IMPACT' in columns:
+            df = df.groupby('IndividualID', 'days_to_birth').pivot('VEP_IMPACT').count()
+            df = df.toPandas()
+        elif 'VEP_IMPACT' in columns:
+            df = self.impact_count(data)
         if 'days_to_birth' in columns:
             df = self.format_age(df)
-        if 'race' in columns:
-            df = race(df)
-        if 'VEP_IMPACT' in columns:
-            df = self.impact_count(sparkdf, df)
         return df
