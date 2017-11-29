@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.linear_model import SGDClassifier, LogisticRegression
 
 
@@ -16,17 +16,18 @@ y_test = pd.read_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/
 
 param_grid_ada = {'n_estimators': [100, 250, 500, 750, 1000], \
                  'learning_rate': [0.1, 0.25, 0.5, 0.75, 1.0]}
-ada1 = AdaBoostClassifier(n_estimators=5000, learning_rate=0.01)
+# ada1 = AdaBoostClassifier(n_estimators=5000, learning_rate=0.01)
 ada2 = AdaBoostClassifier(n_estimators=10000, learning_rate=0.001)
 
+rf1 = RandomForestClassifier(n_estimators=10000, max_features=200, max_depth=5)
+
 sgd1 = SGDClassifier(loss='modified_huber', alpha=0.001, max_iter=100, learning_rate='optimal')
-sgd2 = SGDClassifier(loss='log', alpha=0.001, max_iter=5, learning_rate='optimal')
+# sgd2 = SGDClassifier(loss='log', alpha=0.001, max_iter=5, learning_rate='optimal')
 
-lg1 = LogisticRegression(penalty='l1', C=0.01)
-lg2 = LogisticRegression(penalty='l1', C=0.001)
+lg2 = LogisticRegression(penalty='l1', C=0.03)
 
-clf_list = [ada1, ada2, sgd1, sgd2, lg1, lg2]
-name_list = ['ada e5000 lr.01', 'ada e10000 lr.001', 'sgd mh a.001 mi100 lr', 'sgd log a.001 mi=5 lr', 'lg c.01', 'lg C0.001']
+clf_list = [ada2, rf1, sgd1, lg1, lg2]
+name_list = ['Adaboost', 'Random Forest', 'Gradient Descent', 'Logistic Reg']
 
 for e, clf in enumerate(clf_list):
     clf.fit(X_train, y_train)
