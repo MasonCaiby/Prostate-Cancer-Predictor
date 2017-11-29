@@ -1,14 +1,6 @@
 import pandas as pd
-from pyspark.sql.types import *
-from pyspark.sql.functions import udf, collect_list
-from pyspark.ml.feature import OneHotEncoder, StringIndexer, CountVectorizer
-from pyspark.ml import Pipeline
-from pyspark.mllib.linalg import SparseVector, DenseVector
-from pyspark.mllib.linalg import Vectors, VectorUDT
 from datacleaning_pivot import DataCleaningPivot
 from extra_features import ExtraFeatures
-from preprocess_pivot import PreprocessPivot
-from sklearn.model_selection import train_test_split
 from preprocess_pivot import PreprocessPivot
 
 
