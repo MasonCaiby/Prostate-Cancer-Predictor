@@ -1,8 +1,8 @@
 # Prostate-Cancer-Predictor
 ![Digital DNA](http://www.thinkcx.co.uk/wp-content/uploads/2014/07/DigtalDNA.jpg)
 
-* As of October there were 161,360 new cases of prostate cancer and 26,703 people had died from the disease in 2017 1
-* 26 % of prostate cancers could not be categorized into molecular subtypes 2
+* As of October there were 161,360 new cases of prostate cancer and 26,703 people had died from the disease in 2017 <sup>1</sup>
+* 26 % of prostate cancers could not be categorized into molecular subtypes <sup>2</sup>
 * About 1 in 7 men will be diagnosed with prostate cancer
 * In 2006 the total estimated expenditure on prostate cancer in the US was $9.86 billion
 
