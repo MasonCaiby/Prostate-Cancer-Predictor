@@ -19,6 +19,11 @@ class DataCleaningPivot():
         # self.columns = columns
         return None
 
+    def filter_alleles(self, df):
+        af = df.select('IndividualID', 'VEP_GENE', 'AF - tumor', 'AF - normal', 'Gleason Score')
+        af_filter = af.filter(af['AF - tumor'] > af['AF - normal'])
+        return af_filter
+
     def create_pivot(self, df):
         id_gene = df.select('IndividualID', 'VEP_GENE')
         pivot = id_gene.groupby('VEP_GENE').pivot('IndividualID').count()
@@ -58,6 +63,7 @@ class DataCleaningPivot():
         '''
         Calls all data cleaning set to get usable dataframe
         '''
+        df = self.filter_alleles(df)
         X = self.create_pivot(df)
         labels = self.get_labels(df)
 
