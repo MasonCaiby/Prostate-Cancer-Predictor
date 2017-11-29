@@ -13,7 +13,7 @@ from extra_features import ExtraFeatures
 if __name__ == '__main__':
     import pyspark as ps
     spark = ps.sql.SparkSession.builder \
-        .master('local[6]') \
+        .master('local[2]') \
         .appName('capstone') \
         .getOrCreate()
 
@@ -22,7 +22,9 @@ if __name__ == '__main__':
     EF = ExtraFeatures()
     extra_df = EF.fit_transform(data=df, columns=cols)
     extra_df = extra_df.set_index('IndividualID')
-    one_hot_genes = pd.read_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/genes_from_pivot3.csv', index_col=0)
+    extra_df = extra_df.dropna(subset=['age'])
+    # extra_df.to_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/non_gene_data.csv')
+    one_hot_genes = pd.read_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/genes_from_pivotft.csv', index_col=0)
     joined = one_hot_genes.join(extra_df)
     joined = joined.dropna(subset=['age'])
-    joined.to_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/genes_extra_features.csv')
+    joined.to_csv('/Users/meghan/DSI/capstone/Prostate-Cancer-Predictor/data/genes_extra_featuresft.csv')
