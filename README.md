@@ -56,7 +56,7 @@ Models were optimized with the [grid_search_select.py](https://github.com/meghan
 #### PCA also indicated that ~99% of the data can be explained by ~360 gene components
 
 
-![PCA graph](https://github.com/meghan-sloan/Prostate-Cancer-Predictor/blob/master/Figure_1.png "PCA")
+![PCA graph](https://github.com/meghan-sloan/Prostate-Cancer-Predictor/blob/master/results/pca.png "PCA")
 
 ## Balancing classes
 In an effort to balance classes, the [preprocessing_pivot.py](https://github.com/meghan-sloan/Prostate-Cancer-Predictor/blob/master/src/preprocessing/preprocess_pivot.py) duplicates non-aggressive entries.  However, in the grid-search optimization this causes data leakage and instead the class_weight parameter was used on the unbalanced data.
